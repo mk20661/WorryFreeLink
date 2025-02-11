@@ -3,27 +3,23 @@
 
 #include <Arduino_FreeRTOS.h>
 
-#define LED_Older_1 6
-#define LED_Older_2 7
-#define LED_Older_3 8
-#define LED_Older_4 9
-#define LED_Older_5 10
+#define LED_Older_1 3
+#define LED_Older_2 4
+#define LED_Older_3 5
+#define LED_Older_4 6
+#define LED_Older_5 7
 
-#define LED_Kid_1 11
-#define LED_Kid_2 12
-#define LED_Kid_3 13
+#define LED_Kid_1 8
+#define LED_Kid_2 9
+#define LED_Kid_3 10
 
-#define LED_Older_6 0
-#define LED_Older_7 1
-#define LED_Older_8 2
-#define LED_Older_9 3
-#define LED_Older_10 4
 
-#define LED_Kid_4 A3
-#define LED_Kid_5 A4
-#define LED_Kid_6 A5
+#define LED_Kid_4 11
+#define LED_Kid_5 12
+#define LED_Kid_6 13
 
-#define Button 5     
+#define Button 2
+
 
 TaskHandle_t ledTaskHandle;
 TaskHandle_t buttonTaskHandle;
@@ -39,7 +35,7 @@ volatile int currentOlederLEDIndex_case2 = 5;
 volatile int currentKidLEDIndex_case1 = 0;
 volatile int currentKidLEDIndex_case2 = 3;
 
-std::vector<int> olderLEDPins = {LED_Older_1, LED_Older_2, LED_Older_3, LED_Older_4, LED_Older_5, LED_Older_6, LED_Older_7, LED_Older_8, LED_Older_9, LED_Older_10};
+std::vector<int> olderLEDPins = {LED_Older_1, LED_Older_2, LED_Older_3, LED_Older_4, LED_Older_5};
 std::vector<int> kidLEDPins = {LED_Kid_1,LED_Kid_2,LED_Kid_3,LED_Kid_4,LED_Kid_5,LED_Kid_6};
 
 void checkButton1(void *parameter) {
@@ -55,11 +51,6 @@ void checkButton1(void *parameter) {
             digitalWrite(LED_Older_3, LOW);
             digitalWrite(LED_Older_4, LOW);
             digitalWrite(LED_Older_5, LOW);
-            digitalWrite(LED_Older_6, LOW);
-            digitalWrite(LED_Older_7, LOW);
-            digitalWrite(LED_Older_8, LOW);
-            digitalWrite(LED_Older_9, LOW);
-            digitalWrite(LED_Older_10, LOW);
 
             digitalWrite(LED_Kid_1, LOW);
             digitalWrite(LED_Kid_2, LOW);
@@ -112,28 +103,6 @@ void selectStatus(void *parameter) {
           break;
 
         case 2:
-          for (int i = 0; i < 5; i++) {
-              if (selectButtonPressed) break;
-              digitalWrite(olderLEDPins[currentOlederLEDIndex_case2], HIGH);
-              vTaskDelay(pdMS_TO_TICKS(500));
-              digitalWrite(olderLEDPins[currentOlederLEDIndex_case2], LOW);
-              vTaskDelay(pdMS_TO_TICKS(500));
-          }
-
-          if (!selectButtonPressed) {
-              digitalWrite(olderLEDPins[currentOlederLEDIndex_case2], HIGH);
-          }
-
-          while (!selectButtonPressed) {
-              vTaskDelay(pdMS_TO_TICKS(100));
-          }
-
-          digitalWrite(olderLEDPins[currentOlederLEDIndex_case2], LOW);
-          selectButtonPressed = false;
-          currentOlederLEDIndex_case2 = 5 + ((currentOlederLEDIndex_case2 - 5 + 1) % 5);
-          break;
-
-        case 3:
          for (int i = 0; i < 5; i++) {
             if (selectButtonPressed) break;
               digitalWrite(kidLEDPins[currentKidLEDIndex_case1], HIGH);
@@ -155,7 +124,7 @@ void selectStatus(void *parameter) {
             currentKidLEDIndex_case1 = (currentKidLEDIndex_case1 + 1) % 3;
             break;
 
-        case 4:
+        case 3:
          for (int i = 0; i < 5; i++) {
             if (selectButtonPressed) break;
               digitalWrite(kidLEDPins[currentKidLEDIndex_case2], HIGH);
@@ -217,23 +186,6 @@ void ledTask(void *parameter) {
     currentMode = 2;
     for (int i = 0; i < 5; i++) {
         if (taskStopped) { vTaskDelete(NULL); }
-        digitalWrite(LED_Older_6, HIGH);
-        digitalWrite(LED_Older_7, HIGH);
-        digitalWrite(LED_Older_8, HIGH);
-        digitalWrite(LED_Older_9, HIGH);
-        digitalWrite(LED_Older_10, HIGH);
-        vTaskDelay(pdMS_TO_TICKS(500));
-        digitalWrite(LED_Older_6, LOW);
-        digitalWrite(LED_Older_7, LOW);
-        digitalWrite(LED_Older_8, LOW);
-        digitalWrite(LED_Older_9, LOW);
-        digitalWrite(LED_Older_10, LOW);
-        vTaskDelay(pdMS_TO_TICKS(500));
-    }
-
-    currentMode = 3;
-    for (int i = 0; i < 5; i++) {
-        if (taskStopped) { vTaskDelete(NULL); }
         digitalWrite(LED_Kid_1, HIGH);
         digitalWrite(LED_Kid_2, HIGH);
         digitalWrite(LED_Kid_3, HIGH);
@@ -244,7 +196,7 @@ void ledTask(void *parameter) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
-    currentMode = 4;
+    currentMode = 3;
     for (int i = 0; i < 5; i++) {
         if (taskStopped) { vTaskDelete(NULL); }
         digitalWrite(LED_Kid_4, HIGH);
@@ -269,13 +221,7 @@ void setup() {
   pinMode(LED_Kid_1, OUTPUT);
   pinMode(LED_Kid_2, OUTPUT);
   pinMode(LED_Kid_3, OUTPUT);
-
-  pinMode(LED_Older_6, OUTPUT);
-  pinMode(LED_Older_7, OUTPUT);
-  pinMode(LED_Older_8, OUTPUT);
-  pinMode(LED_Older_9, OUTPUT);
-  pinMode(LED_Older_10, OUTPUT);
-
+  
   pinMode(LED_Kid_4, OUTPUT);
   pinMode(LED_Kid_5, OUTPUT);
   pinMode(LED_Kid_6, OUTPUT);
