@@ -41,13 +41,22 @@ volatile int currentKidLEDIndex_case2 = 3;
 std::vector<int> olderLEDPins = {LED_Older_1, LED_Older_2, LED_Older_3, LED_Older_4, LED_Older_5};
 std::vector<int> kidLEDPins1 = {LED_Kid_1,LED_Kid_2,LED_Kid_3};
 std::vector<int> kidLEDPins2 = {LED_Kid_4,LED_Kid_5,LED_Kid_6};
+std::vector<int> activeLEDs;
+
+std::vector<int> getCurrentActiveLEDs() {
+      return activeLEDs;
+  }
+
+int getCurrentMode() {
+    return currentMode;
+}
 
 //mqtt setting
 const char* ssid          = SECRET_SSID;
 const char* password      = SECRET_PASS;
 const char* mqtt_username = SECRET_MQTTUSER;
 const char* mqtt_password = SECRET_MQTTPASS;
-const char* mqtt_server   = SECRET_MQTTPASS;
+const char* mqtt_server   = SECRET_MQTTSERVER;
 const int mqtt_port       = SECRET_MQTT_HOST;
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
@@ -66,6 +75,7 @@ void setup_wifi() {
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 }
+
 
 void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("MQTT message received [");
@@ -121,6 +131,73 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
 }
 
+void mqttsendmessage() {
+  if (!client.connected()) {
+    Serial.println("MQTT client not connected. Message not sent.");
+    return;
+  }
+
+  int mode = getCurrentMode();
+  const char* topic = nullptr;
+  int ledindex = -1;
+
+  std::vector<int> activeLEDsNow = getCurrentActiveLEDs();
+  if (activeLEDsNow.empty()) {
+    Serial.println("No active LEDs to publish.");
+    return;
+  }
+
+  int activePin = activeLEDsNow[0]; 
+
+  switch (mode) {
+    case 1:
+      topic = subscribeTopic1;
+      for (size_t i = 0; i < olderLEDPins.size(); ++i) {
+        if (olderLEDPins[i] == activePin) {
+          ledindex = i + 1;
+          break;
+        }
+      }
+      break;
+    case 2:
+      topic = subscribeTopic2;
+      for (size_t i = 0; i < kidLEDPins1.size(); ++i) {
+        if (kidLEDPins1[i] == activePin) {
+          ledindex = i + 1;
+          break;
+        }
+      }
+      break;
+    case 3:
+      topic = subscribeTopic3;
+      for (size_t i = 0; i < kidLEDPins2.size(); ++i) {
+        if (kidLEDPins2[i] == activePin) {
+          ledindex = i + 1;
+          break;
+        }
+      }
+      break;
+    default:
+      Serial.println("Invalid mode. Message not sent.");
+      return;
+  }
+
+  if (ledindex == -1) {
+    Serial.println("Active LED not recognized for current mode.");
+    return;
+  }
+
+  String message = String(ledindex);
+  if (client.publish(topic, message.c_str())) {
+    Serial.print("Published to ");
+    Serial.print(topic);
+    Serial.print(": ");
+    Serial.println(message);
+  } else {
+    Serial.println("Publish failed.");
+  }
+}
+
 void mqttReconnect(void *parameter){
   while (true) {
     if (WiFi.status() != WL_CONNECTED) {
@@ -154,7 +231,7 @@ void mqttReconnect(void *parameter){
             }
         }
     }
-    client.loop(); 
+    client.loop();
   }
 }
 
@@ -202,7 +279,10 @@ void selectStatus(void *parameter) {
           }
 
           if (!selectButtonPressed) {
+              activeLEDs.clear();
               digitalWrite(olderLEDPins[currentOlederLEDIndex_case1], HIGH);
+              activeLEDs.push_back(olderLEDPins[currentOlederLEDIndex_case1]);
+              mqttsendmessage();
           }
 
           while (!selectButtonPressed) {
@@ -211,7 +291,12 @@ void selectStatus(void *parameter) {
 
           digitalWrite(olderLEDPins[currentOlederLEDIndex_case1], LOW);
           selectButtonPressed = false;
+
+          // activeLEDs.clear();
+
           currentOlederLEDIndex_case1 = (currentOlederLEDIndex_case1 + 1) % 5;
+          // activeLEDs.push_back(olderLEDPins[currentOlederLEDIndex_case1]);
+          // mqttsendmessage();
           client.subscribe(subscribeTopic2);
           client.subscribe(subscribeTopic3);
           break;
@@ -226,7 +311,10 @@ void selectStatus(void *parameter) {
             }
 
             if (!selectButtonPressed) {
+              activeLEDs.clear();
               digitalWrite(kidLEDPins1[currentKidLEDIndex_case1], HIGH);
+              activeLEDs.push_back(kidLEDPins1[currentKidLEDIndex_case1]);
+              mqttsendmessage();
             }
 
             while (!selectButtonPressed) {
@@ -235,7 +323,11 @@ void selectStatus(void *parameter) {
 
             digitalWrite(kidLEDPins1[currentKidLEDIndex_case1], LOW);
             selectButtonPressed = false;
+
+            // activeLEDs.clear();
             currentKidLEDIndex_case1 = (currentKidLEDIndex_case1 + 1) % 3;
+            // activeLEDs.push_back(kidLEDPins1[currentKidLEDIndex_case1]);
+            // mqttsendmessage();
             client.subscribe(subscribeTopic1);
             client.subscribe(subscribeTopic3);
             break;
@@ -250,7 +342,11 @@ void selectStatus(void *parameter) {
             }
 
             if (!selectButtonPressed) {
+              activeLEDs.clear();
               digitalWrite(kidLEDPins2[currentKidLEDIndex_case2], HIGH);
+              activeLEDs.push_back(kidLEDPins2[currentKidLEDIndex_case2 - 3]);
+            
+              mqttsendmessage();
             }
 
             while (!selectButtonPressed) {
@@ -259,7 +355,13 @@ void selectStatus(void *parameter) {
 
             digitalWrite(kidLEDPins2[currentKidLEDIndex_case2], LOW);
             selectButtonPressed = false;
+
+            // activeLEDs.clear();
+
             currentKidLEDIndex_case2 = 3 + ((currentKidLEDIndex_case2 - 3 + 1) % 3);
+            // activeLEDs.push_back(kidLEDPins2[currentKidLEDIndex_case2 - 3]);
+            
+            // mqttsendmessage();
             client.subscribe(subscribeTopic1);
             client.subscribe(subscribeTopic2);
             break;
@@ -278,6 +380,8 @@ void selectButton(void *parameter) {
     }
 }
 
+
+
 void ledTask(void *parameter) {
   while(1){
     if (taskStopped) { 
@@ -294,6 +398,7 @@ void ledTask(void *parameter) {
         for (int pin : {LED_Older_1, LED_Older_2, LED_Older_3, LED_Older_4, LED_Older_5}) {
           digitalWrite(pin, LOW);
         }
+        activeLEDs.clear();
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
@@ -307,6 +412,7 @@ void ledTask(void *parameter) {
         for (int pin : {LED_Kid_1, LED_Kid_2, LED_Kid_3}) {
             digitalWrite(pin, LOW);
         }
+        activeLEDs.clear();
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
@@ -320,6 +426,7 @@ void ledTask(void *parameter) {
         for (int pin : {LED_Kid_4, LED_Kid_5, LED_Kid_6}) {
           digitalWrite(pin, LOW);
         }
+        activeLEDs.clear();
         vTaskDelay(pdMS_TO_TICKS(500));
     }
   }  
