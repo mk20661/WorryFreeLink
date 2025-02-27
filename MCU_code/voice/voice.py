@@ -5,7 +5,7 @@ from gtts import gTTS
 #text = f"Select Exercising"
 #text = f"Select Sleeping"
 #text = f"Select social activities"
-text = f"Select other activities "
+text = f"Select other activities"
 
 
 tts = gTTS(text, lang='en')
