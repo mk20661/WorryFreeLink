@@ -235,7 +235,7 @@ void restButtonTask(void *pvParameters) {
 
 void setup() {
   Serial.begin(115200);
-playerSerial.begin(9600);
+  playerSerial.begin(9600);
   delay(1000);
   sendCommand("AT+PLAYMODE=3");
   sendCommand("AT+LED=ON");
