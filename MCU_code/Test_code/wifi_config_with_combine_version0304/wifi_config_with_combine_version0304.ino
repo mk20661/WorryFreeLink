@@ -66,7 +66,9 @@ void setup() {
    sendCommand("AT+PLAYMODE=3");
    sendCommand("AT+LED=ON");
    sendCommand("AT+VOL=13");
-  for (int pin : {OlderSelected,KidSelected_1,KidSelected_2,
+
+
+   for (int pin : {OlderSelected,KidSelected_1,KidSelected_2,
                   LED_Older_1, LED_Older_2, LED_Older_3, LED_Older_4, LED_Older_5,
                   LED_Kid_1, LED_Kid_2, LED_Kid_3, LED_Kid_4, LED_Kid_5, LED_Kid_6}) {
         pinMode(pin, OUTPUT);
