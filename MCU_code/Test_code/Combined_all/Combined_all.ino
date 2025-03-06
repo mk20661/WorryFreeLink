@@ -11,8 +11,8 @@ WiFiServer server(80);
 const char *apSSID = "WiFi_Config";
 const char *apPassword = "";
 
-const char *staSSID = nullptr;
-const char *staPassword = nullptr;
+char staSSID[32] = "";    
+char staPassword[32] = "";
 
 
 
@@ -100,7 +100,6 @@ void WiFiTask(void *parameter) {
     Serial.println("Connect to this WiFi and go to 192.168.4.1 in your browser.");
     server.begin();
 
-    
     while (true) {
         WiFiClient client = server.available();
         if (client) {
@@ -110,7 +109,7 @@ void WiFiTask(void *parameter) {
                 char c = client.read();
                 request += c;
             }
-            
+
             if (request.indexOf("GET / ") >= 0) {
                 sendWiFiForm(client);
             } else if (request.indexOf("GET /config?ssid=") >= 0) {
@@ -118,11 +117,9 @@ void WiFiTask(void *parameter) {
             }
             client.stop();
         }
-         vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
-
-
 
 void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("MQTT message received [");
@@ -246,9 +243,9 @@ void mqttsendmessage() {
   }
 }
 
-void mqttReconnect(void *parameter){
-  Serial.println("start mqtt");
-  while (!client.connected()) {
+void mqttReconnect(void *parameter) {
+    Serial.println("start mqtt");
+   while (true) {
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("WiFi disconnected, reconnecting...");
       WiFi.disconnect();
@@ -270,6 +267,12 @@ void mqttReconnect(void *parameter){
                 client.subscribe(subscribeTopic3);
                 Serial.println("Subscribed to topics");
 
+                // if (client.connected()) {
+                //     client.subscribe(subscribeTopic1);
+                //     client.subscribe(subscribeTopic2);
+                //     client.subscribe(subscribeTopic3);
+                //     Serial.println("Subscribed to topics");
+                // }
             } else {
                 Serial.print("Failed, status: ");
                 Serial.print(client.state());
@@ -278,7 +281,6 @@ void mqttReconnect(void *parameter){
             }
         }
     }
-    else{Serial.println("test1");}
     client.loop();
     vTaskDelay(pdMS_TO_TICKS(10));
   }
@@ -435,9 +437,16 @@ void sendCommand(String command) {
 }
 
 void startApplicationTasks() {
+   
     xTaskCreate(ledTask, "LED Task", 256, NULL, 1, &ledTaskHandle);
     xTaskCreate(checkButton1, "Check Button", 256, NULL, 1, &buttonTaskHandle);
-    xTaskCreate(restButtonTask, "restbutton", 256, NULL, 1, NULL); 
+    if (xTaskCreate(mqttReconnect, "mqttReconnect", 512, NULL, 1, &mqttRconnectTaskHandle) != pdPASS) {
+      Serial.println("Failed to create mqttReconnect Task!");
+    } else 
+    {
+      Serial.println("mqttReconnect Task created successfully.");
+    }
+    xTaskCreate(restButtonTask, "restbutton", 256, NULL, 1, NULL);  
 }
 
 
@@ -514,16 +523,14 @@ void setup() {
         digitalWrite(pin, LOW);
   }
   pinMode(Button, INPUT_PULLUP); 
-  if (xTaskCreate(WiFiTask, "WiFi Task", 1024, NULL, 1, &wifiTaskHandle) != pdPASS) {
+  if (xTaskCreate(WiFiTask, "WiFi Task", 512, NULL, 1, &wifiTaskHandle) != pdPASS) {
         Serial.println("Failed to create WiFiTask!");
     } else {
         Serial.println("WiFiTask created successfully.");
     } 
 
-  // xTaskCreate(mqttReconnect, "mqttReconnect", 1024, NULL, 2, NULL);
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
-
   vTaskStartScheduler();
 }
 
@@ -556,18 +563,14 @@ void handleWiFiConfig(WiFiClient &client, String request) {
     client.println("</body></html>");
     client.flush();
 
-    if (staSSID) free((void*)staSSID); 
-    if (staPassword) free((void*)staPassword);
-    staSSID = strdup(ssid.c_str());    
-    staPassword = strdup(password.c_str());
+    ssid.toCharArray(staSSID, sizeof(staSSID));
+    password.toCharArray(staPassword, sizeof(staPassword));
     Serial.println("Attempting to connect to STA: " + String(staSSID));
 
     delay(1000);
 
     WiFi.end();
-    WiFi.begin(staSSID, staPassword);
-    Serial.println("STA IP :");
-    Serial.println(WiFi.localIP());
+    WiFi.begin(ssid.c_str(), password.c_str());
     Serial.println("Connecting to WiFi...");
     
     int retry = 0;
@@ -576,7 +579,9 @@ void handleWiFiConfig(WiFiClient &client, String request) {
             Serial.println("WiFi Connected!");
             Serial.print("IP Address: ");
             Serial.println(WiFi.localIP());
-            startApplicationTasks();
+
+            startApplicationTasks(); 
+            vTaskDelete(wifiTaskHandle); 
             return;
         }
         Serial.println("Trying to connect...");
@@ -624,4 +629,3 @@ void sendWiFiForm(WiFiClient &client) {
     client.println("</form>");
     client.println("</body></html>");
 }
-
