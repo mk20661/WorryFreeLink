@@ -5,3 +5,4 @@ MCU_code/Test_code/mqttCombineFreeRTOS/arduino_secrets.h
 MCU_code/Test_code/Mqtttestcode_1/arduino_secrets.h
 MCU_code/Test_code/mqtttestcode_2/arduino_secrets.h
 MCU_code/Test_code/Combined_all/arduino_secrets.h
+MCU_code/newVersion/parentsVersion/arduino_secrets.h
