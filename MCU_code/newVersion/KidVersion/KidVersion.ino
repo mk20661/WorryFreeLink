@@ -132,7 +132,7 @@ void selectStatus(void *parameter) {
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 
-    digitalWrite(olderLEDPins[currentKidLED1Index_case], LOW);
+    digitalWrite(kidLEDPins1[currentKidLED1Index_case], LOW);
     selectButtonPressed = false;
     currentKidLED1Index_case = (currentKidLED1Index_case + 1) % 2;
         
@@ -344,7 +344,7 @@ void mqttsendmessage() {
     } else {
       Serial.println("Publish failed.");
     }
-    vTaskDelay(pdMS_TO_TICKS(300)); 
+    vTaskDelay(pdMS_TO_TICKS(200)); 
   }
 }
 

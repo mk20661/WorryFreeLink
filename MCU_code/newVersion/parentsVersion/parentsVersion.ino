@@ -382,7 +382,7 @@ void mqttsendmessage() {
     } else {
       Serial.println("Publish failed.");
     }
-    vTaskDelay(pdMS_TO_TICKS(300)); 
+    vTaskDelay(pdMS_TO_TICKS(200)); 
   }
 }
 
