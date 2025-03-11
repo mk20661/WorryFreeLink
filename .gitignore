@@ -7,3 +7,6 @@ MCU_code/Test_code/mqtttestcode_2/arduino_secrets.h
 MCU_code/Test_code/Combined_all/arduino_secrets.h
 MCU_code/newVersion/parentsVersion/arduino_secrets.h
 MCU_code/newVersion/KidVersion/arduino_secrets.h
+MCU_code/Version2/parentsVersion/arduino_secrets.h
+MCU_code/Version3/kidVersion/arduino_secrets.h
+MCU_code/Version3/parentsVersion/arduino_secrets.h
