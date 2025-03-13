@@ -8,6 +8,7 @@
 #define LED_strip 26
 #define older_led 25
 
+Adafruit_NeoPixel elder_strip(8, 25, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel kid_strip(8, 26, NEO_GRB + NEO_KHZ800);
 
 WebServer server(80);
@@ -37,7 +38,8 @@ bool currentButtonState;
 unsigned long lastDebounceTime = 0;  
 const unsigned long debounceDelay = 50; 
 bool wifi_Connect =false;
-
+unsigned long lastPressTime = 0;
+const unsigned long timeoutPeriod = 30000;
 
 void handleWiFiConfig();
 void sendWiFiForm();
@@ -52,6 +54,9 @@ void setup() {
     kid_strip.setBrightness(30);
     kid_strip.fill(kid_strip.Color(0, 0, 0));
     kid_strip.show();
+    elder_strip.setBrightness(30);
+    elder_strip.fill(kid_strip.Color(0, 0, 0));
+    elder_strip.show();
     
     WiFi.softAP(apSSID, apPassword);
     Serial.println("AP mode started, SSID: " + String(apSSID));
@@ -71,13 +76,19 @@ void loop() {
         delay(1000);
         return; 
     }
-    handleButtonPress();
 
     if (!client.connected()) {
-        reconnectMQTT();
+      reconnectMQTT();
     }
 
+    handleButtonPress();
     client.loop();
+    if (millis() - lastPressTime > timeoutPeriod && ledState == 1) {
+      kid_strip.setPixelColor(0, kid_strip.Color(255, 0, 0));
+      kid_strip.show();
+      ledState = !ledState;
+      mqttsendmessage(0);
+    }
 }
 
 void reconnectMQTT() {
@@ -119,13 +130,19 @@ void handleButtonPress() {
 
     if ((millis() - lastDebounceTime) > debounceDelay) { 
         if (reading == HIGH && lastButtonState == LOW) {  
-            ledState = !ledState; 
-            kid_strip.setPixelColor(0, kid_strip.Color(0, ledState ? 255 : 0, 0));
-            kid_strip.show();
+            ledState = !ledState;
+            if (ledState == 1) {
+              kid_strip.setPixelColor(0, kid_strip.Color(0, 255, 0));
+              lastPressTime = millis();
+              mqttsendmessage(1);
+            } else {
+              kid_strip.setPixelColor(0, kid_strip.Color(255, 0, 0));
+              mqttsendmessage(0);
+            }
+             kid_strip.show(); 
             lastDebounceTime = millis();  
             Serial.print("Button Pressed! LED State: ");
             Serial.println(ledState); 
-            mqttsendmessage(ledState ? 1 : 0);
         }
     }
 
@@ -147,10 +164,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
         Serial.println("Processing older LED status...");
         int tmpMessage = receivedMessage.toInt();
         if (tmpMessage == 1) {
-            digitalWrite(older_led,HIGH);
+            elder_strip.setPixelColor(0, elder_strip.Color(0, 255, 0));
+            elder_strip.show();
             Serial.print("Turning ON older LED");
         } else if (tmpMessage == 0){
-            digitalWrite(older_led,HIGH);
+            elder_strip.setPixelColor(0, elder_strip.Color(255, 0, 0));
+            elder_strip.show();
             Serial.println("Turning OFF older LED");
         } else{
             Serial.println('invalid index');
@@ -158,13 +177,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     } else if (String(topic) == subscribeTopic3) {
         Serial.println("Processing Kid LED2 status...");
         int ledIndex = receivedMessage.toInt();
-       int tmpMessage = receivedMessage.toInt();
+        int tmpMessage = receivedMessage.toInt();
         if (tmpMessage == 1) {
             kid_strip.setPixelColor(2, kid_strip.Color(0, 255, 0));
             kid_strip.show(); 
             Serial.print("Turning ON kid2 LED");
         } else if (tmpMessage == 0){
-            kid_strip.setPixelColor(2, kid_strip.Color(0, 0, 0));
+            kid_strip.setPixelColor(2, kid_strip.Color(255, 0, 0));
             kid_strip.show(); 
             Serial.println("Turning OFF kid2 LED");
         } else{
@@ -179,7 +198,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
             kid_strip.show(); 
             Serial.print("Turning ON kid3 LED");
         } else if (tmpMessage == 0){
-            kid_strip.setPixelColor(4, kid_strip.Color(0, 0, 0));
+            kid_strip.setPixelColor(4, kid_strip.Color(255, 0, 0));
             kid_strip.show(); 
             Serial.println("Turning OFF kid3 LED");
         } else{
