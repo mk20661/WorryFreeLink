@@ -39,7 +39,7 @@ unsigned long lastDebounceTime = 0;
 const unsigned long debounceDelay = 50; 
 bool wifi_Connect =false;
 unsigned long lastPressTime = 0;
-const unsigned long timeoutPeriod = 30000;//7200000; 
+const unsigned long timeoutPeriod = 7200000;
 
 
 void handleWiFiConfig();
