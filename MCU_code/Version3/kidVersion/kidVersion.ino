@@ -13,7 +13,7 @@ Adafruit_NeoPixel kid_strip(8, 26, NEO_GRB + NEO_KHZ800);
 
 WebServer server(80);
 
-const char *apSSID = "WiFi_Config";
+const char *apSSID = "WiFi_Config_kid";
 const char *apPassword = "";
 String wifiOptions = "";
 
@@ -27,10 +27,10 @@ const int mqtt_port       = SECRET_MQTT_HOST;
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
-const char* subscribeTopic1 = "oldLED/currentStatus";
-const char* subscribeTopic2 = "kidLED1/currentStatus";
-const char* subscribeTopic3 = "kidLED2/currentStatus";
-const char* subscribeTopic4 = "kidLED3/currentStatus";
+const char* subscribeTopic1 = "student/group1/oldLED/currentStatus";
+const char* subscribeTopic2 = "student/group1/kidLED1/currentStatus";
+const char* subscribeTopic3 = "student/group1/kidLED2/currentStatus";
+const char* subscribeTopic4 = "student/group1/kidLED3/currentStatus";
 
 bool ledState = false; 
 bool lastButtonState = HIGH;  
@@ -47,7 +47,6 @@ void sendWiFiForm();
 void setup() {
     Serial.begin(115200);
     WiFi.begin(apSSID, apPassword);
-    client.setServer(mqtt_server, mqtt_port);
     pinMode(restButton, INPUT_PULLUP);
     pinMode(older_led, OUTPUT);
     kid_strip.begin();           
@@ -82,13 +81,15 @@ void loop() {
     }
 
     handleButtonPress();
-    client.loop();
+    
     if (millis() - lastPressTime > timeoutPeriod && ledState == 1) {
       kid_strip.setPixelColor(0, kid_strip.Color(255, 0, 0));
       kid_strip.show();
       ledState = !ledState;
       mqttsendmessage(0);
     }
+
+    client.loop();
 }
 
 void reconnectMQTT() {
@@ -112,7 +113,7 @@ void reconnectMQTT() {
 
         if (!client.connected()) {
             Serial.println("Connecting to MQTT...");
-            if (client.connect("ESP32Client", mqtt_username, mqtt_password)) {
+            if (client.connect("ESP32Client2", mqtt_username, mqtt_password)) {
                 Serial.println("MQTT connected!");
                 client.subscribe(subscribeTopic1);
                 client.subscribe(subscribeTopic3);
@@ -268,6 +269,25 @@ void handleWiFiConfig() {
         Serial.print(" IP Address: ");
         Serial.println(WiFi.localIP());
         wifi_Connect = true;
+        for (int i = 0; i < 3; i++) {
+          elder_strip.setPixelColor(0, elder_strip.Color(0, 255, 0));
+          elder_strip.show();
+          kid_strip.setPixelColor(0, kid_strip.Color(0, 255, 0));
+          kid_strip.setPixelColor(2, kid_strip.Color(0, 255, 0));
+          kid_strip.setPixelColor(4, kid_strip.Color(0, 255, 0));
+          kid_strip.show();
+          
+          delay(500);
+
+          elder_strip.setPixelColor(0, elder_strip.Color(0, 0, 0));
+          elder_strip.show();
+          kid_strip.setPixelColor(0, kid_strip.Color(0, 0, 0));
+          kid_strip.setPixelColor(2, kid_strip.Color(0, 0, 0));
+          kid_strip.setPixelColor(4, kid_strip.Color(0, 0, 0));
+          kid_strip.show();
+          
+          delay(500);
+        }
     } else {
         response += "<h1> WiFi Connection Failed!</h1>";
         response += "<p>Incorrect password or connection issue.</p>";
