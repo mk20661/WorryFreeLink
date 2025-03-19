@@ -44,26 +44,51 @@ bool wifi_Connect =false;
 unsigned long lastPressTime = 0;
 const unsigned long timeoutPeriod = 7200000;
 
+std::vector<String> savedSSIDs;
+
+void scanWiFiNetworks() {
+    Serial.println("Scanning for available Wi-Fi networks...");
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    delay(100);
+
+    int numNetworks = WiFi.scanNetworks();
+    Serial.print("Number of Wi-Fi networks found: ");
+    Serial.println(numNetworks);
+
+    savedSSIDs.clear();
+
+    if (numNetworks > 0) {
+        for (int i = 0; i < numNetworks; i++) {
+            String ssid = WiFi.SSID(i);
+            Serial.println("Found SSID: " + ssid);
+            if (std::find(savedSSIDs.begin(), savedSSIDs.end(), ssid) == savedSSIDs.end()) {
+                savedSSIDs.push_back(ssid); 
+            }
+        }
+    } else {
+        Serial.println("No Wi-Fi networks found.");
+    }
+}
+
 void handleRoot() {
     String html = "<html><body><h2>Wi-Fi Configuration</h2>";
     html += "<form action='/save' method='POST'>";
     html += "SSID: <select name='ssid'>";
-    
-    int numNetworks = WiFi.scanNetworks();
-    std::vector<String> uniqueSSIDs;
-    
-    for (int i = 0; i < numNetworks; i++) {
-        String ssid = WiFi.SSID(i);
-        if (std::find(uniqueSSIDs.begin(), uniqueSSIDs.end(), ssid) == uniqueSSIDs.end()) {
-            uniqueSSIDs.push_back(ssid);
+
+    if (savedSSIDs.empty()) {
+        html += "<option value=''>No networks found</option>";
+    } else {
+        for (String ssid : savedSSIDs) {
             html += "<option value='" + ssid + "'>" + ssid + "</option>";
         }
     }
-    
+
     html += "</select><br>";
     html += "Password: <input type='password' name='password'><br>";
     html += "<input type='submit' value='Save'>";
     html += "</form></body></html>";
+
     server.send(200, "text/html", html);
 }
 
@@ -88,7 +113,7 @@ void handleRedirect() {
 
 void setup() {
     Serial.begin(115200);
-    WiFi.begin(apSSID, apPassword);
+    scanWiFiNetworks();
     pinMode(restButton, INPUT_PULLUP);
     pinMode(older_led, OUTPUT);
     kid_strip.begin();           
@@ -147,14 +172,12 @@ void setup() {
             return;
         }
     }
-    
     Serial.println("\nWi-Fi connection failed, starting AP mode...");
     WiFi.softAP(apSSID, apPassword);
     Serial.println("AP started, IP Address:");
     Serial.println(WiFi.softAPIP());
     
     dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
-    WiFi.scanNetworks();
     
     server.on("/", handleRoot);
     server.on("/save", HTTP_POST, handleSave);
@@ -212,7 +235,7 @@ void reconnectMQTT() {
     }
     Serial.println("Connecting to MQTT...");
     String clientID = "ESP32Client-" + String(random(1000, 9999)); 
-    if (client.connect(clientID.c_str(), mqtt_username, mqtt_password)) {
+    if (client.connect("kidsClient", mqtt_username, mqtt_password)) {
         Serial.println("MQTT connected!");
         client.subscribe(subscribeTopic1);
         client.subscribe(subscribeTopic3);
