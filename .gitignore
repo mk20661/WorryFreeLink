@@ -10,3 +10,5 @@ MCU_code/newVersion/KidVersion/arduino_secrets.h
 MCU_code/Version2/parentsVersion/arduino_secrets.h
 MCU_code/Version3/kidVersion/arduino_secrets.h
 MCU_code/Version3/parentsVersion/arduino_secrets.h
+MCU_code/Version4/Kids_Version/arduino_secrets.h
+MCU_code/Version4/parents_Version/arduino_secrets.h

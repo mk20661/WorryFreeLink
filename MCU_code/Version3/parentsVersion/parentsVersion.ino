@@ -112,7 +112,7 @@ void reconnectMQTT() {
 
         if (!client.connected()) {
             Serial.println("Connecting to MQTT...");
-            if (client.connect("ESP32Client1", mqtt_username, mqtt_password)) {
+            if (client.connect("GPPGroupClient1", mqtt_username, mqtt_password)) {
                 Serial.println("MQTT connected!");
                 client.subscribe(subscribeTopic2);
                 client.subscribe(subscribeTopic3);
