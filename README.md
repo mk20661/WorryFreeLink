@@ -46,7 +46,7 @@ By bridging the gap between the fast-paced lives of children and the emotional n
 
 ## Our Team
 
-Hongbing Qiu: qakightbing@163.com
+Hongbing Qiu: ucfnhqi@ucl.ac.uk
 
 Qiqing Dai: 13336824560@163.com
 
