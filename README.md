@@ -7,6 +7,9 @@ WorryFreeLink is an innovative two-way communication solution specifically desig
 
 By bridging the gap between the fast-paced lives of children and the emotional needs of elderly parents, WorryFreeLink transforms family care from missed calls and uncertainty into effortless, meaningful connection.
 
+
+![7611745773143_ pic](https://github.com/user-attachments/assets/df076937-f249-444e-8c96-6d11a7acc88e)
+
 ## Benefits
 
 1. **Simple and Intuitive Operation**: Change and send status updates with a single press of a button.
@@ -31,4 +34,20 @@ By bridging the gap between the fast-paced lives of children and the emotional n
 
 ## Support and Resources
 
+ - `Final Version Code`: MCU control code used in the final MVP, available in two versions: kid and parent.
+
+ - `MCU_Code`: MCU control code from various iterations during development.
+
+ - `Product Shell`: 3D modeling files for the product casing.
+
+ - `UI Iterations`: Dashboard design files and UI development iterations.
+
 ## Our Team
+
+Hongbing Qiu:
+
+Qiqing Dai: 13336824560@163.com
+
+Ying Wu: holawuyy@outlook.com
+
+Xinming Feng: ucfnfen@ucl.ac.uk
