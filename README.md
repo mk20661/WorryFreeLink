@@ -1,4 +1,6 @@
 # WorryFreeLink
+<img src="https://github.com/user-attachments/assets/4a1504d0-7de1-49b4-9598-5993b41e680f" width="100" height="100" alt="WorryFreeLink">
+
 ## Overview
 
 WorryFreeLink is an innovative two-way communication solution specifically designed for elderly individuals living alone and their busy family members. With a simple press of a large red button, users can instantly update and share their real-time status. A visualized dashboard provides immediate insight into each other's availability and well-being.
