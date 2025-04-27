@@ -1,5 +1,6 @@
 # WorryFreeLink
 <img src="https://github.com/user-attachments/assets/4a1504d0-7de1-49b4-9598-5993b41e680f" width="100" height="100" alt="WorryFreeLink">
+Introduction Video: https://www.youtube.com/watch?v=38rpdO915HA
 
 ## Overview
 
