@@ -18,7 +18,7 @@ Preferences preferences;
 WebServer server(80);
 DNSServer dnsServer;
 
-const char *apSSID = "Wifi_config_kids";
+const char *apSSID = "Wifi_config_parents";
 const char *apPassword = "";
 const byte DNS_PORT = 53;
 
@@ -113,7 +113,7 @@ void handleRedirect() {
 
 void setup() {
     Serial.begin(115200);
-    scanWiFiNetworks();
+    scanWiFiNetworks(); 
     pinMode(restButton, INPUT_PULLUP);
     pinMode(older_led, OUTPUT);
     kid_strip.begin();           
@@ -235,9 +235,9 @@ void reconnectMQTT() {
     }
     Serial.println("Connecting to MQTT...");
     String clientID = "ESP32Client-" + String(random(1000, 9999)); 
-    if (client.connect("kidsClient", mqtt_username, mqtt_password)) {
+    if (client.connect("parentsClient", mqtt_username, mqtt_password)) {
         Serial.println("MQTT connected!");
-        client.subscribe(subscribeTopic1);
+        client.subscribe(subscribeTopic2);
         client.subscribe(subscribeTopic3);
         client.subscribe(subscribeTopic4);
     } else {
@@ -251,16 +251,16 @@ void handleButtonPress() {
 
     if ((millis() - lastDebounceTime) > debounceDelay) { 
         if (reading == HIGH && lastButtonState == LOW) {  
-            ledState = !ledState;
+            ledState = !ledState; 
             if (ledState == 1) {
-              kid_strip.setPixelColor(0, kid_strip.Color(0, 255, 0));
+              elder_strip.setPixelColor(0, elder_strip.Color(0, 255, 0));
               lastPressTime = millis();
               mqttsendmessage(1);
             } else {
-              kid_strip.setPixelColor(0, kid_strip.Color(255, 0, 0));
+              elder_strip.setPixelColor(0, elder_strip.Color(255, 0, 0));
               mqttsendmessage(0);
             }
-             kid_strip.show(); 
+            elder_strip.show(); 
             lastDebounceTime = millis();  
             Serial.print("Button Pressed! LED State: ");
             Serial.println(ledState); 
@@ -281,24 +281,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
     Serial.println(receivedMessage);
 
-    if (String(topic) == subscribeTopic1) {
-        Serial.println("Processing older LED status...");
+    if (String(topic) == subscribeTopic2) {
+        Serial.println("Processing Kid LED1 status...");
         int tmpMessage = receivedMessage.toInt();
         if (tmpMessage == 1) {
-            elder_strip.setPixelColor(0, elder_strip.Color(0, 255, 0));
-            elder_strip.show();
-            Serial.print("Turning ON older LED");
+            kid_strip.setPixelColor(0, kid_strip.Color(0, 255, 0));
+            kid_strip.show(); 
+            Serial.print("Turning ON kid1 LED");
         } else if (tmpMessage == 0){
-            elder_strip.setPixelColor(0, elder_strip.Color(255, 0, 0));
-            elder_strip.show();
-            Serial.println("Turning OFF older LED");
+            kid_strip.setPixelColor(0, kid_strip.Color(255, 0, 0));
+            kid_strip.show(); 
+            Serial.println("Turning OFF kid1 LED");
         } else{
             Serial.println('invalid index');
         }
     } else if (String(topic) == subscribeTopic3) {
         Serial.println("Processing Kid LED2 status...");
         int ledIndex = receivedMessage.toInt();
-        int tmpMessage = receivedMessage.toInt();
+       int tmpMessage = receivedMessage.toInt();
         if (tmpMessage == 1) {
             kid_strip.setPixelColor(2, kid_strip.Color(0, 255, 0));
             kid_strip.show(); 
@@ -333,9 +333,9 @@ void mqttsendmessage(int message) {
     Serial.println("MQTT client not connected. Message not sent.");
     return;
   }
-    if (client.publish(subscribeTopic2, String(message).c_str())) {
+    if (client.publish(subscribeTopic1, String(message).c_str())) {
       Serial.print("Published to ");
-      Serial.print(subscribeTopic2);
+      Serial.print(subscribeTopic1);
       Serial.print(": ");
       Serial.println(message);
     } else {
