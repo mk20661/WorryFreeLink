@@ -12,15 +12,15 @@ By bridging the gap between the fast-paced lives of children and the emotional n
 
 ## Benefits
 
-1. **Simple and Intuitive Operation**: Change and send status updates with a single press of a button.☑️
+1. **Simple and Intuitive Operation**: Change and send status updates with a single press of a button. ☑️
 
-2. **Large, Eye-Catching Red Button**: Highly visible and engaging for users of all ages.☑️
+2. **Large, Eye-Catching Red Button**: Highly visible and engaging for users of all ages. ☑️
 
-3. **LED Light Indicators**: Flashing LEDs make it easy to see and recognize status changes.☑️
+3. **LED Light Indicators**: Flashing LEDs make it easy to see and recognize status changes. ☑️
 
-4. **Real-Time Status Updates and Interaction**: Ensures instant and seamless communication.☑️
+4. **Real-Time Status Updates and Interaction**: Ensures instant and seamless communication. ☑️
 
-5. **Elegant Design**: Attractive appearance that also serves as a decorative piece☑️
+5. **Elegant Design**: Attractive appearance that also serves as a decorative piece. ☑️
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ By bridging the gap between the fast-paced lives of children and the emotional n
 
 ## Our Team
 
-Hongbing Qiu:
+Hongbing Qiu: qakightbing@163.com
 
 Qiqing Dai: 13336824560@163.com
 
