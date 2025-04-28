@@ -206,7 +206,7 @@ First, the two conceptual avatars on the dashboard will be eliminated in future 
   <b>Figure 12:</b> Wi-Fi Connection Setting
   </p> 
 
-### Reference
+### 6 Reference
 United Nations (2023). World Social Report 2023: Leaving No One Behind In An Ageing World. [online] UN DESA Publications. Available at: https://desapublications.un.org/publications/world-social-report-2023-leaving-no-one-behind-ageing-world.
 
 Caballero, P., Ortiz, G. and Inmaculada Medina-Bulo (2023). Systematic literature review of ambient assisted living systems supported by the Internet of Things. Universal access in the information society. doi:https://doi.org/10.1007/s10209-023-01022-w.
