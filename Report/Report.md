@@ -2,9 +2,6 @@
 # CASA0021: Connected Environments Group Prototype and Pitch
 ## WorryFree  Project Final Report
 
-
----
-
 ```
 Hongbing Qiu
 ID： 24065411
@@ -65,7 +62,6 @@ Project Development Plan:
   <b>Table 3:</b> Team Schedule
   </p>
 
----
 
 ## 2. Literature review
 Technology plays an increasingly vital role in facilitating communication between elderly individuals and their families. In particular, Ambient Assisted Living (AAL) systems that leverage Internet of Things (IoT) technologies have shown great promise as supportive tools for enhancing the quality of life and independence of older adults (Caballero et al., 2024).
@@ -74,7 +70,6 @@ However, the effectiveness of such technologies is often limited by the relative
 
 Given these challenges, recent studies in human-computer interaction emphasize the importance of simple and intuitive interface design for older users. Yeh (2020) found that button position and font size significantly affected the performance of elderly participants when operating touchscreen devices. Specifically, older adults performed best when buttons were placed at the top of the screen and when the font size was increased to 22 points. These findings suggest that minimalist interfaces, such as those featuring larger text and well-positioned buttons, can effectively reduce cognitive load and accommodate sensory limitations, thereby improving usability and technology acceptance among ageing populations.
 
----
 
 ## 3. Design Process & Iterations
 ### 3.1 Initial Design Proposal
@@ -103,6 +98,7 @@ In further changes to the interface, user pain points are constantly being refin
   </p>
 
 ### 3.3 Product Modelling
+
 The final high-fidelity UI underwent two major iterations and ultimately formed a simple and easy-to-use interface. To meet the usage habits of the elderly, improve usability, and reduce the cognitive load of the product, while adhering to the principle of simplicity, have become key (Norman, 2013; Krug, 2014).
 
 Based on this principle, it is necessary to minimise unnecessary complexity in the product modelling process and ensure that the elderly can interact with the system intuitively without a steep learning curve. Secondly, to improve the safety of user use, the corners of the product are designed with no sharp edges (ISO 12100:2010), and to make it easy to integrate into the user's home space as a home product, contemporary minimalist design is combined in line with aesthetic trends (Baghirov&Zhang, 2024).
@@ -127,7 +123,6 @@ Based on this principle, it is necessary to minimise unnecessary complexity in t
   <b>Figure 7:</b> Final Device 
   </p>  
 
----
 
 ## 4. Implementation & Reproducibility 
 ### 4.1 Hardware
@@ -170,7 +165,7 @@ However, during the iteration process, this version was found to be overly compl
 
 This optimisation process not only made the product better aligned with principles of age-friendly design but also significantly reduced development and manufacturing costs. It clarified the product's core functions by eliminating redundant features, thereby enhancing ease of use for elderly users.
 
----
+
 ## 5  Conclusions and future work
 
 ### 5.1 Conclusions
@@ -224,5 +219,3 @@ Norman, D. A. (2013). The Design of Everyday Things: Revised and Expanded Editio
 International Organization for Standardization. (2010). ISO 12100:2010: Safety of machinery — General principles for design — Risk assessment and risk reduction. ISO.
 
 Baghirov, F., & Zhang, Y. (2024). Assessment of the association between aesthetic products and perceived product quality: an analysis of customer attitudes. Journal of Consumer Marketing, 41(7), 789–803. https://doi.org/10.1108/jcm-01-2024-6521
-
----
